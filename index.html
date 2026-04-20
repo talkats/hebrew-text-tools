@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>כלי טקסט עברי</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #eef2ff; direction: rtl; padding: 20px; }
+  h1 { text-align: center; color: #3333cc; font-size: 26px; margin-bottom: 6px; }
+  .subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 20px; }
+  .card { background: white; border-radius: 16px; padding: 24px; max-width: 900px; margin: 0 auto; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+
+  .tabs { display: flex; gap: 4px; margin-bottom: 22px; border-bottom: 2px solid #eee; padding-bottom: 0; flex-wrap: wrap; }
+  .tab-btn { padding: 9px 16px; border: none; background: none; font-size: 14px; font-weight: bold; color: #888; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; border-radius: 8px 8px 0 0; transition: all 0.2s; }
+  .tab-btn:hover { color: #3333cc; background: #f0f0ff; }
+  .tab-btn.active { color: #3333cc; border-bottom-color: #3333cc; background: #f0f0ff; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  label { font-weight: bold; display: block; margin-bottom: 6px; color: #333; font-size: 14px; }
+  textarea { width: 100%; height: 140px; font-size: 15px; padding: 10px 12px; border: 2px solid #ccc; border-radius: 10px; resize: vertical; font-family: Arial, sans-serif; direction: rtl; transition: border 0.2s; }
+  textarea:focus { border-color: #3333cc; outline: none; }
+  textarea#outputArea, textarea#urlOutput { background: #f7f8ff; }
+
+  .select-row { display: flex; gap: 10px; margin: 14px 0 4px 0; align-items: flex-start; flex-wrap: wrap; }
+  .select-wrap { flex: 1; min-width: 200px; }
+  select { width: 100%; padding: 10px 14px; font-size: 15px; border: 2px solid #ccc; border-radius: 10px; background: white; cursor: pointer; color: #222; }
+  select:focus { border-color: #3333cc; outline: none; }
+
+  .example-box { margin-top: 6px; background: #f5f5ff; border: 1px solid #dde; border-radius: 8px; padding: 6px 12px; font-size: 12px; color: #555; direction: ltr; text-align: left; font-family: monospace; min-height: 28px; }
+  .example-box .arrow { color: #3333cc; font-weight: bold; margin: 0 4px; }
+  .example-box .before { color: #cc3333; }
+  .example-box .after { color: #228822; }
+
+  .btn { padding: 10px 24px; font-size: 15px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; transition: background 0.2s, transform 0.1s; white-space: nowrap; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn-go { background: #3333cc; color: white; font-size: 16px; padding: 11px 32px; align-self: flex-start; }
+  .btn-go:hover { background: #2222aa; }
+  .btn-copy { background: #eef2ff; color: #3333cc; border: 2px solid #3333cc; margin-top: 8px; }
+  .btn-copy:hover { background: #dde3ff; }
+  .btn-swap { background: #f0f0f0; color: #444; border: 2px solid #ccc; }
+  .btn-swap:hover { background: #e0e0e0; }
+  .btn-clear { background: #fff0f0; color: #cc3333; border: 2px solid #ffcccc; }
+  .btn-clear:hover { background: #ffe0e0; }
+  .btn-green { background: #22aa44; color: white; }
+  .btn-green:hover { background: #1a8833; }
+
+  .detection-box { background: #fffbe6; border: 1px solid #ffe066; border-radius: 8px; padding: 9px 14px; font-size: 13px; color: #7a5f00; margin: 10px 0; display: none; }
+  .detection-box.show { display: block; }
+  .result-section { margin-top: 16px; }
+  .result-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
+  .char-count { font-size: 12px; color: #aaa; text-align: left; margin-top: 4px; }
+  code { background: #f0f0f0; padding: 1px 5px; border-radius: 4px; font-size: 12px; direction: ltr; display: inline-block; }
+  .legend { font-size: 12px; color: #888; line-height: 2; }
+  .legend b { color: #555; }
+
+  /* ===== טאב ניקוי קישורים ===== */
+  .url-box { margin-bottom: 16px; }
+  .url-input {
+    width: 100%; padding: 12px 14px; font-size: 14px;
+    border: 2px solid #ccc; border-radius: 10px;
+    font-family: monospace; direction: ltr; text-align: left;
+    resize: vertical; min-height: 80px;
+    transition: border 0.2s;
+  }
+  .url-input:focus { border-color: #3333cc; outline: none; }
+  .url-output-box {
+    background: #f7fbff; border: 2px solid #c0d8f0;
+    border-radius: 10px; padding: 12px 14px;
+    font-family: monospace; font-size: 14px;
+    direction: ltr; text-align: left;
+    word-break: break-all; min-height: 50px;
+    color: #1a5c99; margin-top: 10px;
+    display: none;
+  }
+  .url-output-box.show { display: block; }
+  .url-params-removed {
+    margin-top: 10px; padding: 8px 14px;
+    background: #fff8e6; border: 1px solid #ffd080;
+    border-radius: 8px; font-size: 12px; color: #7a5000;
+    display: none;
+  }
+  .url-params-removed.show { display: block; }
+  .url-params-removed ul { margin: 4px 0 0 16px; }
+  .url-stats { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+  .url-stat-box {
+    flex: 1; min-width: 120px; background: #f0f4ff;
+    border-radius: 8px; padding: 10px 14px; text-align: center;
+  }
+  .url-stat-num { font-size: 22px; font-weight: bold; color: #3333cc; }
+  .url-stat-label { font-size: 11px; color: #888; }
+
+  /* פרמטרים לסינון */
+  .params-config { margin-top: 16px; }
+  .params-config summary { cursor: pointer; font-size: 13px; color: #3333cc; font-weight: bold; padding: 6px 0; }
+  .params-config-body { padding: 12px; background: #f5f5ff; border-radius: 10px; margin-top: 8px; }
+  .params-config-body label { font-weight: normal; font-size: 13px; margin-bottom: 4px; }
+  .custom-params { width: 100%; padding: 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 8px; font-family: monospace; direction: ltr; margin-top: 6px; }
+  .preset-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .preset-btn { padding: 4px 12px; font-size: 12px; border: 1px solid #3333cc; color: #3333cc; background: white; border-radius: 20px; cursor: pointer; }
+  .preset-btn:hover { background: #eef2ff; }
+
+  /* ===== סימנים ===== */
+  .ascii-search { width: 100%; padding: 10px 14px; font-size: 14px; border: 2px solid #ccc; border-radius: 10px; margin-bottom: 16px; direction: rtl; }
+  .ascii-search:focus { border-color: #3333cc; outline: none; }
+  .ascii-section { margin-bottom: 20px; }
+  .ascii-section-title { font-weight: bold; font-size: 14px; color: #3333cc; margin-bottom: 10px; padding: 5px 10px; background: #f0f0ff; border-radius: 8px; border-right: 4px solid #3333cc; }
+  .ascii-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+  .ascii-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid #e0e0f0; border-radius: 8px; background: #fafafa; cursor: pointer; transition: all 0.15s; user-select: none; }
+  .ascii-item:hover { background: #eef2ff; border-color: #3333cc; transform: translateY(-1px); }
+  .ascii-item:active { transform: translateY(0); background: #dde4ff; }
+  .ascii-char { font-size: 22px; min-width: 28px; text-align: center; line-height: 1; }
+  .ascii-name { font-size: 11px; color: #666; line-height: 1.3; }
+
+  /* ===== טקסט מעוצב ===== */
+  .style-input-wrap { margin-bottom: 14px; }
+  .style-input-wrap textarea { height: 70px; direction: ltr; }
+  .style-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .style-item { border: 1px solid #e0e0f0; border-radius: 10px; padding: 12px; background: #fafafa; cursor: pointer; transition: all 0.15s; }
+  .style-item:hover { background: #eef2ff; border-color: #3333cc; }
+  .style-label { font-size: 11px; color: #888; margin-bottom: 6px; font-weight: bold; }
+  .style-preview { font-size: 17px; color: #222; word-break: break-all; direction: ltr; text-align: left; min-height: 26px; }
+  .style-copy-hint { font-size: 10px; color: #3333cc; margin-top: 4px; }
+
+  @media (max-width: 600px) {
+    .select-row { flex-direction: column; }
+    .btn-go { width: 100%; }
+    .ascii-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    .tabs { gap: 2px; }
+    .tab-btn { padding: 7px 10px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🔧 כלי טקסט עברי</h1>
+  <p class="subtitle">תיקון ג'יבריש · ניקוי קישורים · סימנים מיוחדים · טקסט מעוצב</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('fix',this)">🔧 תיקון טקסט</button>
+    <button class="tab-btn" onclick="switchTab('url',this)">🔗 ניקוי קישורים</button>
+    <button class="tab-btn" onclick="switchTab('symbols',this)">✦ סימנים מיוחדים</button>
+    <button class="tab-btn" onclick="switchTab('styled',this)">𝐁 טקסט מעוצב</button>
+  </div>
+
+  <!-- ===== תיקון טקסט ===== -->
+  <div class="tab-content active" id="tab-fix">
+    <label for="inputArea">טקסט לתיקון:</label>
+    <textarea id="inputArea" placeholder="הדבק כאן את הטקסט המקולקל..." oninput="updateCount()"></textarea>
+    <div class="char-count" id="charCount">0 תווים</div>
+    <div class="select-row">
+      <div class="select-wrap">
+        <select id="fixType" onchange="updateExample()">
+          <option value="auto">🔍 זיהוי אוטומטי</option>
+          <optgroup label="──── כיוון טקסט ────">
+            <option value="rtl2ltr">RTL ל-LTR</option>
+            <option value="ltr2rtl">LTR ל-RTL</option>
+            <option value="reverseWords">היפוך סדר מילים</option>
+          </optgroup>
+          <optgroup label="──── עברית ויזואלית/לוגית ────">
+            <option value="visualToLogical">עברית ויזואלית → לוגית (תיקון הפוך)</option>
+            <option value="logicalToVisual">עברית לוגית → ויזואלית (לגרפיקה)</option>
+          </optgroup>
+          <optgroup label="──── מקלדת ────">
+            <option value="engToHeb">הקלדה אנגלית → עברית</option>
+            <option value="hebToEng">הקלדה עברית → אנגלית</option>
+          </optgroup>
+          <optgroup label="──── DOS / Windows ────">
+            <option value="dosToWin">עברית DOS → Windows</option>
+            <option value="winToDos">עברית Windows → DOS</option>
+          </optgroup>
+          <optgroup label="──── HTML / URL ────">
+            <option value="htmlEncode">HTML Encode</option>
+            <option value="htmlDecode">HTML Decode</option>
+            <option value="urlEncode">URL Encode</option>
+            <option value="urlDecode">URL Decode</option>
+          </optgroup>
+          <optgroup label="──── Encoding ────">
+            <option value="fixEncoding">תיקון Encoding שגוי (ג'יבריש)</option>
+          </optgroup>
+        </select>
+        <div class="example-box" id="exampleBox"></div>
+      </div>
+      <button class="btn btn-go" onclick="doFix()">✅ תקן!</button>
+    </div>
+    <div class="detection-box" id="detectionBox"></div>
+    <div class="result-section">
+      <label for="outputArea">תוצאה:</label>
+      <textarea id="outputArea" readonly placeholder="התוצאה תופיע כאן..."></textarea>
+      <div class="result-actions">
+        <button class="btn btn-copy" onclick="copyEl('outputArea',this)">📋 העתק תוצאה</button>
+        <button class="btn btn-swap" onclick="swapTexts()">🔄 העבר תוצאה לקלט</button>
+        <button class="btn btn-clear" onclick="clearAll()">🗑️ נקה הכל</button>
+      </div>
+    </div>
+    <hr>
+    <div class="legend">
+      <b>ויזואלית→לוגית:</b> <code>םולש</code> → <code>שלום</code> &nbsp;|&nbsp;
+      <b>מקלדת אנגלית→עברית:</b> <code>ekln</code> → <code>שלום</code><br>
+      <b>HTML Decode:</b> <code>&amp;#1513;...</code> → <code>שלום</code> &nbsp;|&nbsp;
+      <b>URL Decode:</b> <code>%D7%A9...</code> → <code>שלום</code><br>
+      <b>תיקון Encoding:</b> <code>ùìåí</code> או <code>×©×œ×•×</code> → <code>שלום</code>
+    </div>
+  </div>
+
+  <!-- ===== ניקוי קישורים ===== -->
+  <div class="tab-content" id="tab-url">
+    <div class="url-box">
+      <label>הדבק קישור לניקוי:</label>
+      <textarea class="url-input" id="urlInput" placeholder="https://www.linkedin.com/posts/example?utm_source=share&utm_medium=member_desktop&rcm=..." oninput="autoCleanUrl()" dir="ltr"></textarea>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+      <button class="btn btn-go" onclick="cleanUrl()">🧹 נקה קישור!</button>
+      <button class="btn btn-clear" onclick="clearUrl()">🗑️ נקה הכל</button>
+    </div>
+
+    <div class="url-params-removed" id="urlParamsRemoved"></div>
+
+    <div style="display:none" id="urlResultWrap">
+      <label style="margin-top:12px;">קישור נקי:</label>
+      <div class="url-output-box show" id="urlOutput" dir="ltr"></div>
+      <div class="result-actions">
+        <button class="btn btn-green" onclick="copyUrlResult()">📋 העתק קישור נקי</button>
+      </div>
+      <div class="url-stats" id="urlStats"></div>
+    </div>
+
+    <details class="params-config">
+      <summary>⚙️ הגדרות מתקדמות – פרמטרים לסינון</summary>
+      <div class="params-config-body">
+        <label>פרמטרים שיוסרו (מופרדים בפסיק):</label>
+        <textarea class="custom-params" id="customParams" rows="3" dir="ltr">utm_source, utm_medium, utm_campaign, utm_term, utm_content, utm_id,
+rcm, ref, referral, fbclid, gclid, gclsrc, dclid, msclkid,
+_ga, _gl, mc_eid, mc_cid, igshid, s_kwcid, ef_id,
+share, feature, src, source, origin, trk, trkInfo</textarea>
+        <div class="preset-btns">
+          <button class="preset-btn" onclick="addPreset('linkedin')">+ LinkedIn</button>
+          <button class="preset-btn" onclick="addPreset('facebook')">+ Facebook</button>
+          <button class="preset-btn" onclick="addPreset('google')">+ Google Ads</button>
+          <button class="preset-btn" onclick="addPreset('all')">+ הכל</button>
+        </div>
+      </div>
+    </details>
+
+    <hr>
+    <div class="legend">
+      <b>מה מוסר?</b> פרמטרי UTM, מזהי מעקב (fbclid, gclid), פרמטרי LinkedIn (rcm, share, trk) ועוד.<br>
+      <b>טיפ:</b> ניתן להוסיף פרמטרים מותאמים אישית בהגדרות המתקדמות.
+    </div>
+  </div>
+
+  <!-- ===== סימנים מיוחדים ===== -->
+  <div class="tab-content" id="tab-symbols">
+    <input class="ascii-search" type="text" placeholder="🔍 חפש סימן... (למשל: חץ, כוכב, עיגול)" oninput="filterSymbols(this.value)">
+    <div id="symbolsContainer"></div>
+    <hr>
+    <p style="font-size:12px;color:#aaa;text-align:center;">לחץ על כל סימן להעתקה מיידית ללוח</p>
+  </div>
+
+  <!-- ===== טקסט מעוצב ===== -->
+  <div class="tab-content" id="tab-styled">
+    <div class="style-input-wrap">
+      <label>הכנס טקסט באנגלית לעיצוב:</label>
+      <textarea id="styledInput" placeholder="Type English text here..." oninput="updateStyledPreviews()" dir="ltr"></textarea>
+    </div>
+    <div class="style-grid" id="styleGrid"></div>
+    <hr>
+    <p style="font-size:12px;color:#aaa;text-align:center;">לחץ על כל סגנון להעתקה · עובד בלינקדאין, ווטסאפ, טלגרם ועוד</p>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// טאבים
+// =====================================================
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// =====================================================
+// ניקוי קישורים
+// =====================================================
+const PRESETS = {
+  linkedin: ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','utm_id','rcm','share','trk','trkInfo'],
+  facebook: ['fbclid','fb_action_ids','fb_action_types','fb_ref','fb_source'],
+  google:   ['gclid','gclsrc','dclid','msclkid','_ga','_gl','s_kwcid','ef_id'],
+  all:      ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','utm_id','rcm','ref','referral','fbclid','gclid','gclsrc','dclid','msclkid','_ga','_gl','mc_eid','mc_cid','igshid','s_kwcid','ef_id','share','feature','src','source','origin','trk','trkInfo']
+};
+
+function addPreset(name) {
+  const ta = document.getElementById('customParams');
+  const current = ta.value.split(',').map(s=>s.trim()).filter(Boolean);
+  const toAdd = PRESETS[name] || [];
+  toAdd.forEach(p => { if (!current.includes(p)) current.push(p); });
+  ta.value = current.join(', ');
+}
+
+function getParamsToRemove() {
+  const val = document.getElementById('customParams').value;
+  return val.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+}
+
+function cleanUrl() {
+  const raw = document.getElementById('urlInput').value.trim();
+  if (!raw) { alert('הדבק קישור קודם!'); return; }
+
+  let url;
+  try { url = new URL(raw); }
+  catch(e) { alert('קישור לא תקין – בדוק שהוא מתחיל ב-https://'); return; }
+
+  const paramsToRemove = getParamsToRemove();
+  const removed = [];
+  const kept = [];
+
+  url.searchParams.forEach((val, key) => {
+    if (paramsToRemove.includes(key.toLowerCase())) removed.push({key, val});
+    else kept.push({key, val});
+  });
+
+  const cleanedUrl = new URL(url.origin + url.pathname);
+  kept.forEach(({key, val}) => cleanedUrl.searchParams.append(key, val));
+  cleanedUrl.hash = url.hash;
+
+  const cleanStr = cleanedUrl.toString();
+
+  document.getElementById('urlOutput').textContent = cleanStr;
+  document.getElementById('urlResultWrap').style.display = 'block';
+
+  const removedBox = document.getElementById('urlParamsRemoved');
+  if (removed.length > 0) {
+    let html = `<b>🗑️ הוסרו ${removed.length} פרמטרי מעקב:</b><ul>`;
+    removed.forEach(({key, val}) => {
+      const shortVal = val.length > 40 ? val.substring(0,40)+'...' : val;
+      html += `<li><code>${key}</code> = <code>${shortVal}</code></li>`;
+    });
+    html += '</ul>';
+    removedBox.innerHTML = html;
+    removedBox.className = 'url-params-removed show';
+  } else {
+    removedBox.innerHTML = '✅ לא נמצאו פרמטרי מעקב בקישור זה';
+    removedBox.className = 'url-params-removed show';
+  }
+
+  const origLen = raw.length;
+  const cleanLen = cleanStr.length;
+  const saved = origLen - cleanLen;
+  document.getElementById('urlStats').innerHTML = `
+    <div class="url-stat-box">
+      <div class="url-stat-num">${removed.length}</div>
+      <div class="url-stat-label">פרמטרים הוסרו</div>
+    </div>
+    <div class="url-stat-box">
+      <div class="url-stat-num">${saved > 0 ? '-'+saved : '0'}</div>
+      <div class="url-stat-label">תווים נחסכו</div>
+    </div>
+    <div class="url-stat-box">
+      <div class="url-stat-num">${kept.length}</div>
+      <div class="url-stat-label">פרמטרים נשמרו</div>
+    </div>
+  `;
+}
+
+function autoCleanUrl() {
+  const raw = document.getElementById('urlInput').value.trim();
+  if (raw.startsWith('http') && raw.includes('?')) {
+    setTimeout(cleanUrl, 100);
+  }
+}
+
+function copyUrlResult() {
+  const text = document.getElementById('urlOutput').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = '✅ הועתק!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+function clearUrl() {
+  document.getElementById('urlInput').value = '';
+  document.getElementById('urlOutput').textContent = '';
+  document.getElementById('urlResultWrap').style.display = 'none';
+  document.getElementById('urlParamsRemoved').className = 'url-params-removed';
+  document.getElementById('urlStats').innerHTML = '';
+}
+
+// =====================================================
+// דוגמאות לתיקון
+// =====================================================
+const EXAMPLES = {
+  auto:           { before: '?', after: 'זיהוי אוטומטי' },
+  rtl2ltr:        { before: 'שלום עולם', after: 'שלום עולם + LTR' },
+  ltr2rtl:        { before: 'hello world', after: 'hello world + RTL' },
+  reverseWords:   { before: 'שלום עולם טוב', after: 'טוב עולם שלום' },
+  visualToLogical:{ before: 'םולש', after: 'שלום' },
+  logicalToVisual:{ before: 'שלום', after: 'םולש' },
+  engToHeb:       { before: 'ekln', after: 'שלום' },
+  hebToEng:       { before: 'שדךא', after: 'word' },
+  dosToWin:       { before: 'ùìåí (CP862)', after: 'שלום' },
+  winToDos:       { before: 'שלום', after: 'ùìåí' },
+  htmlEncode:     { before: 'שלום', after: '&#1513;&#1500;&#1493;&#1501;' },
+  htmlDecode:     { before: '&#1513;&#1500;&#1493;&#1501;', after: 'שלום' },
+  urlEncode:      { before: 'שלום', after: '%D7%A9%D7%9C%D7%95%D7%9D' },
+  urlDecode:      { before: '%D7%A9%D7%9C%D7%95%D7%9D', after: 'שלום' },
+  fixEncoding:    { before: 'ùìåí / ×©×œ×•×', after: 'שלום' },
+};
+
+function updateExample() {
+  const type = document.getElementById('fixType').value;
+  const ex = EXAMPLES[type];
+  const box = document.getElementById('exampleBox');
+  if (!ex) { box.innerHTML=''; return; }
+  box.innerHTML = '<span class="before">'+escHtml(ex.before)+'</span><span class="arrow"> → </span><span class="after">'+escHtml(ex.after)+'</span>';
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// =====================================================
+// לוגיקת תיקון
+// =====================================================
+const ENG_TO_HEB = {
+  'q':'/','w':"'",'e':'ק','r':'ר','t':'א','y':'ט','u':'ו','i':'ן','o':'ם','p':'פ',
+  'a':'ש','s':'ד','d':'ג','f':'כ','g':'ע','h':'י','j':'ח','k':'ל','l':'ך',';':'ף',
+  'z':'ז','x':'ס','c':'ב','v':'ה','b':'נ','n':'מ','m':'צ',',':'ת','.':'ץ','/':'.',
+  'Q':'/','W':"'",'E':'ק','R':'ר','T':'א','Y':'ט','U':'ו','I':'ן','O':'ם','P':'פ',
+  'A':'ש','S':'ד','D':'ג','F':'כ','G':'ע','H':'י','J':'ח','K':'ל','L':'ך',
+  'Z':'ז','X':'ס','C':'ב','V':'ה','B':'נ','N':'מ','M':'צ'
+};
+const HEB_TO_ENG = {};
+Object.entries(ENG_TO_HEB).forEach(([k,v])=>{ if(!HEB_TO_ENG[v]) HEB_TO_ENG[v]=k; });
+
+const HEB_LETTERS = 'אבגדהוזחטיךכלםמןנסעףפץצקרשת';
+
+function dosToWindows(t) {
+  let r='';
+  for(let i=0;i<t.length;i++){
+    const c=t.charCodeAt(i);
+    if(c>=0x05D0&&c<=0x05EA){r+=t[i];continue;}
+    r+=(c>=128&&c<=154)?HEB_LETTERS[c-128]:t[i];
+  }
+  return r;
+}
+
+function windowsToDos(t) {
+  let r='';
+  for(let i=0;i<t.length;i++){
+    const idx=HEB_LETTERS.indexOf(t[i]);
+    r+=idx>=0?String.fromCharCode(128+idx):t[i];
+  }
+  return r;
+}
+
+function reverseText(t) {
+  return t.split('\n').map(l=>l.split('').reverse().join('')).join('\n');
+}
+
+function rtlToLtr(t) {
+  return t.replace(/[\u200F\u200E\u202A-\u202E]/g,'')+'\u200E';
+}
+
+function ltrToRtl(t) {
+  return t.replace(/[\u200F\u200E\u202A-\u202E]/g,'')+'\u200F';
+}
+
+function reverseWords(t) {
+  return t.split('\n').map(l=>l.split(' ').reverse().join(' ')).join('\n');
+}
+
+function htmlEncode(t) {
+  return t.split('').map(ch=>{
+    const c=ch.charCodeAt(0);
+    if(c>127)return'&#'+c+';';
+    return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]||ch;
+  }).join('');
+}
+
+function htmlDecode(t) {
+  const el=document.createElement('textarea');
+  el.innerHTML=t;
+  return el.value;
+}
+
+function urlEncode(t) { return encodeURIComponent(t); }
+
+function urlDecode(t) {
+  try{return decodeURIComponent(t);}
+  catch(e){try{return unescape(t);}catch(e2){return t;}}
+}
+
+const latinHebrewMap = {
+  'à':'א','á':'ב','â':'ג','ã':'ד','ä':'ה','å':'ו','æ':'ז','ç':'ח',
+  'è':'ט','é':'י','ê':'ך','ë':'כ','ì':'ל','í':'ם','î':'מ','ï':'ן',
+  'ð':'נ','ñ':'ס','ò':'ע','ó':'פ','ô':'ף','õ':'צ','ö':'ץ','÷':'ק',
+  'ø':'ר','ù':'ש','ú':'ת'
+};
+
+function fixEncoding(t) {
+  const lhc=(t.match(/[àáâãäåæçèéêëìíîïðñòóôõøùú]/g)||[]).length;
+  const tot=t.replace(/\s/g,'').length;
+
+  // Latin-1 / Windows-1252 מאופיין בהמרת אותיות עברית ל-latin
+  if(lhc>tot*0.2) {
+    return t.replace(/[àáâãäåæçèéêëìíîïðñòóôõö÷øùú]/g, ch=>latinHebrewMap[ch]||ch);
+  }
+
+  // UTF-8 שנקרא כ-Latin-1 (×©×œ×•× סגנון)
+  if(/×[\x80-\xBF]/.test(t)||t.includes('Ã')||/×[^ ]/.test(t)) {
+    try {
+      const b=[];
+      for(let i=0;i<t.length;i++) b.push(t.charCodeAt(i)&0xFF);
+      const d=new TextDecoder('utf-8').decode(new Uint8Array(b));
+      if(/[\u05D0-\u05EA]/.test(d)) return d;
+    } catch(e) {}
+
+    // double-encoded UTF-8
+    try {
+      const b=[];
+      for(let i=0;i<t.length;i++) b.push(t.charCodeAt(i)&0xFF);
+      const s1=new TextDecoder('utf-8').decode(new Uint8Array(b));
+      const b2=[];
+      for(let i=0;i<s1.length;i++) b2.push(s1.charCodeAt(i)&0xFF);
+      const s2=new TextDecoder('utf-8').decode(new Uint8Array(b2));
+      if(/[\u05D0-\u05EA]/.test(s2)) return s2;
+    } catch(e) {}
+  }
+
+  return t;
+}
+
+// =====================================================
+// זיהוי אוטומטי
+// =====================================================
+function autoDetect(t) {
+  if(!t.trim()) return null;
+
+  const heb=(t.match(/[\u05D0-\u05EA]/g)||[]).length;
+  const eng=(t.match(/[a-zA-Z]/g)||[]).length;
+  const tot=t.replace(/\s/g,'').length;
+
+  // HTML entities
+  if(/&#\d+;|&amp;|&lt;|&#x[0-9a-f]+;/i.test(t))
+    return {type:'htmlDecode', desc:'זוהה: HTML Entities'};
+
+  // URL encoding
+  if(/%[0-9A-Fa-f]{2}/.test(t))
+    return {type:'urlDecode', desc:'זוהה: URL Encoding'};
+
+  // Latin chars שהן עברית מקולקלת
+  const lhc=(t.match(/[àáâãäåæçèíîïðñòóôõøùú]/g)||[]).length;
+  if(lhc>tot*0.2)
+    return {type:'fixEncoding', desc:'זוהה: Encoding שגוי (Latin→עברית)'};
+
+  // UTF-8 double-encoded
+  if(/×[\x80-\xBF]/.test(t)||/×[א-ת]/.test(t)||t.includes('×©')||t.includes('×¢'))
+    return {type:'fixEncoding', desc:'זוהה: UTF-8 Double Encoding'};
+
+  // טקסט הפוך – הרבה אותיות עבריות הפוכות
+  if(heb>3) {
+    const firstHeb = t.trim().match(/[\u05D0-\u05EA]/);
+    const lastHeb  = [...t.trim()].reverse().join('').match(/[\u05D0-\u05EA]/);
+    // בדוק אם המילה הראשונה נראית הפוכה (סופיות מנצכפ בהתחלה)
+    const firstWord = t.trim().split(/\s/)[0];
+    if(/^[םןךףץ]/.test(firstWord))
+      return {type:'visualToLogical', desc:'זוהה: עברית ויזואלית (אותיות סופיות בהתחלה)'};
+  }
+
+  // הקלדה על מקלדת אנגלית
+  if(eng>heb && eng>tot*0.5 && tot>2) {
+    // בדוק אם כל האותיות הן מיפוי עברי
+    const mapped = t.replace(/[^a-zA-Z]/g,'').split('').filter(c=>ENG_TO_HEB[c]);
+    if(mapped.length > eng*0.7)
+      return {type:'engToHeb', desc:'זוהה: הקלדה אנגלית על מקלדת עברית'};
+  }
+
+  // DOS encoding
+  const dosChars = (t.match(/[\x80-\x9E]/g)||[]).length;
+  if(dosChars > 0)
+    return {type:'dosToWin', desc:'זוהה: עברית DOS (CP862)'};
+
+  return null;
+}
+
+// =====================================================
+// ביצוע תיקון
+// =====================================================
+function doFix() {
+  const input = document.getElementById('inputArea').value;
+  if(!input.trim()) { alert('הכנס טקסט לתיקון!'); return; }
+
+  let type = document.getElementById('fixType').value;
+  const detBox = document.getElementById('detectionBox');
+
+  if(type === 'auto') {
+    const detected = autoDetect(input);
+    if(detected) {
+      type = detected.type;
+      detBox.textContent = detected.desc;
+      detBox.className = 'detection-box show';
+    } else {
+      detBox.textContent = 'לא זוהה בעיה ברורה – ייתכן שהטקסט תקין';
+      detBox.className = 'detection-box show';
+    }
+  } else {
+    detBox.className = 'detection-box';
+  }
+
+  let result = input;
+  switch(type) {
+    case 'rtl2ltr':         result = rtlToLtr(input); break;
+    case 'ltr2rtl':         result = ltrToRtl(input); break;
+    case 'reverseWords':    result = reverseWords(input); break;
+    case 'visualToLogical': result = reverseText(input); break;
+    case 'logicalToVisual': result = reverseText(input); break;
+    case 'engToHeb':
+      result = input.split('').map(ch=>ENG_TO_HEB[ch]||ch).join('');
+      break;
+    case 'hebToEng':
+      result = input.split('').map(ch=>HEB_TO_ENG[ch]||ch).join('');
+      break;
+    case 'dosToWin':        result = dosToWindows(input); break;
+    case 'winToDos':        result = windowsToDos(input); break;
+    case 'htmlEncode':      result = htmlEncode(input); break;
+    case 'htmlDecode':      result = htmlDecode(input); break;
+    case 'urlEncode':       result = urlEncode(input); break;
+    case 'urlDecode':       result = urlDecode(input); break;
+    case 'fixEncoding':     result = fixEncoding(input); break;
+  }
+
+  document.getElementById('outputArea').value = result;
+}
+
+// =====================================================
+// כלי עזר
+// =====================================================
+function updateCount() {
+  const len = document.getElementById('inputArea').value.length;
+  document.getElementById('charCount').textContent = len + ' תווים';
+}
+
+function copyEl(id, btn) {
+  const el = document.getElementById(id);
+  if(!el.value.trim()) return;
+  navigator.clipboard.writeText(el.value).then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = '✅ הועתק!';
+    setTimeout(()=>btn.textContent=orig, 2000);
+  });
+}
+
+function swapTexts() {
+  const inp = document.getElementById('inputArea');
+  const out = document.getElementById('outputArea');
+  if(!out.value.trim()) return;
+  inp.value = out.value;
+  out.value = '';
+  updateCount();
+}
+
+function clearAll() {
+  document.getElementById('inputArea').value = '';
+  document.getElementById('outputArea').value = '';
+  document.getElementById('charCount').textContent = '0 תווים';
+  document.getElementById('detectionBox').className = 'detection-box';
+}
+
+// Ctrl+Enter לשליחה
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey||e.metaKey) && e.key==='Enter') {
+    const activeTab = document.querySelector('.tab-content.active');
+    if(activeTab && activeTab.id==='tab-fix') doFix();
+  }
+});
+
+// =====================================================
+// סימנים מיוחדים
+// =====================================================
+const SYMBOL_CATEGORIES = [
+  {
+    name: 'נקודות ובולטים',
+    symbols: [
+      {char:'•',name:'Bullet'},
+      {char:'◦',name:'Circle Bullet'},
+      {char:'▪',name:'Small Square'},
+      {char:'▫',name:'White Square'},
+      {char:'‣',name:'Triangular Bullet'},
+      {char:'⁃',name:'Hyphen Bullet'},
+      {char:'▸',name:'Arrowhead'},
+      {char:'▹',name:'White Arrowhead'},
+    ]
+  },
+  {
+    name: 'עיגולים',
+    symbols: [
+      {char:'●',name:'Black Circle'},
+      {char:'○',name:'White Circle'},
+      {char:'◉',name:'Fisheye'},
+      {char:'◎',name:'Bullseye'},
+      {char:'◯',name:'Large Circle'},
+      {char:'⬤',name:'Black Large Circle'},
+      {char:'◌',name:'Dotted Circle'},
+      {char:'◍',name:'Circle w/ Vertical Fill'},
+    ]
+  },
+  {
+    name: 'ריבועים וצורות',
+    symbols: [
+      {char:'■',name:'Black Square'},
+      {char:'□',name:'White Square'},
+      {char:'▣',name:'White Square w/ Corner'},
+      {char:'▤',name:'Square w/ Horizontal Fill'},
+      {char:'▦',name:'Square w/ Orthogonal Crosshatch'},
+      {char:'◆',name:'Black Diamond'},
+      {char:'◇',name:'White Diamond'},
+      {char:'▲',name:'Black Up Triangle'},
+      {char:'△',name:'White Up Triangle'},
+      {char:'▼',name:'Black Down Triangle'},
+    ]
+  },
+  {
+    name: 'חיצים',
+    symbols: [
+      {char:'→',name:'Right Arrow'},
+      {char:'←',name:'Left Arrow'},
+      {char:'↑',name:'Up Arrow'},
+      {char:'↓',name:'Down Arrow'},
+      {char:'↔',name:'Left-Right Arrow'},
+      {char:'↕',name:'Up-Down Arrow'},
+      {char:'➝',name:'Arrow'},
+      {char:'➔',name:'Heavy Arrow'},
+      {char:'⇒',name:'Double Right'},
+      {char:'⇐',name:'Double Left'},
+      {char:'↠',name:'Two Right'},
+      {char:'↪',name:'Right Hook'},
+      {char:'↩',name:'Left Hook'},
+      {char:'➜',name:'Round Tipped Arrow'},
+      {char:'➤',name:'Black Arrowhead'},
+      {char:'►',name:'Play Arrow'},
+    ]
+  },
+  {
+    name: 'סימני הדגשה',
+    symbols: [
+      {char:'✔',name:'Heavy Check'},
+      {char:'✓',name:'Check Mark'},
+      {char:'✗',name:'Ballot X'},
+      {char:'✘',name:'Heavy Ballot X'},
+      {char:'★',name:'Black Star'},
+      {char:'☆',name:'White Star'},
+      {char:'✦',name:'Black Four Pointed Star'},
+      {char:'✪',name:'Circled White Star'},
+      {char:'✨',name:'Sparkles'},
+      {char:'❖',name:'Black Diamond Minus White X'},
+    ]
+  },
+  {
+    name: 'קווים',
+    symbols: [
+      {char:'─',name:'Horizontal Line'},
+      {char:'━',name:'Heavy Horizontal'},
+      {char:'▬',name:'Black Rectangle'},
+      {char:'═',name:'Double Horizontal'},
+      {char:'┄',name:'Dashed Horizontal'},
+      {char:'┅',name:'Heavy Dashed'},
+    ]
+  },
+  {
+    name: 'אייקונים לפוסטים',
+    symbols: [
+      {char:'⚠',name:'Warning'},
+      {char:'💡',name:'Idea'},
+      {char:'🛠',name:'Tools'},
+      {char:'📌',name:'Pushpin'},
+      {char:'📍',name:'Location'},
+      {char:'🧩',name:'Puzzle'},
+      {char:'🚀',name:'Rocket'},
+      {char:'🎯',name:'Target'},
+      {char:'🔑',name:'Key'},
+      {char:'💎',name:'Diamond'},
+      {char:'🔥',name:'Fire'},
+      {char:'✅',name:'Green Check'},
+      {char:'❌',name:'X Mark'},
+      {char:'⭐',name:'Star'},
+      {char:'🏆',name:'Trophy'},
+      {char:'👉',name:'Point Right'},
+      {char:'👇',name:'Point Down'},
+      {char:'💬',name:'Speech Bubble'},
+      {char:'📊',name:'Chart'},
+      {char:'🎁',name:'Gift'},
+    ]
+  },
+];
+
+function buildSymbols() {
+  const container = document.getElementById('symbolsContainer');
+  container.innerHTML = '';
+  SYMBOL_CATEGORIES.forEach(cat => {
+    const sec = document.createElement('div');
+    sec.className = 'ascii-section';
+    sec.innerHTML = `<div class="ascii-section-title">${cat.name}</div>`;
+    const grid = document.createElement('div');
+    grid.className = 'ascii-grid';
+    cat.symbols.forEach(sym => {
+      const item = document.createElement('div');
+      item.className = 'ascii-item';
+      item.innerHTML = `<span class="ascii-char">${sym.char}</span><span class="ascii-name">${sym.name}</span>`;
+      item.addEventListener('click', () => copySymbol(sym.char, item));
+      grid.appendChild(item);
+    });
+    sec.appendChild(grid);
+    container.appendChild(sec);
+  });
+}
+
+function copySymbol(char, el) {
+  navigator.clipboard.writeText(char).then(() => {
+    const orig = el.innerHTML;
+    el.innerHTML = `<span class="ascii-char">✅</span><span class="ascii-name">הועתק!</span>`;
+    setTimeout(() => el.innerHTML = orig, 1200);
+  });
+}
+
+function filterSymbols(query) {
+  const q = query.trim().toLowerCase();
+  if(!q) { buildSymbols(); return; }
+
+  // מיפוי עברי → אנגלי לחיפוש
+  const searchMap = {
+    'חץ':'arrow','כוכב':'star','עיגול':'circle','ריבוע':'square',
+    'בולט':'bullet','נקודה':'bullet','קו':'line','כוכבית':'star',
+    'וי':'check','איקס':'x mark','שורה':'line','משולש':'triangle',
+    'יהלום':'diamond','חץ ימין':'right arrow','חץ שמאל':'left arrow'
+  };
+  const engQuery = searchMap[q] || q;
+
+  const container = document.getElementById('symbolsContainer');
+  container.innerHTML = '';
+  const results = [];
+  SYMBOL_CATEGORIES.forEach(cat => {
+    cat.symbols.forEach(sym => {
+      if(sym.name.toLowerCase().includes(engQuery) ||
+         sym.char.includes(q) ||
+         cat.name.includes(q)) {
+        results.push(sym);
+      }
+    });
+  });
+
+  if(results.length === 0) {
+    container.innerHTML = '<p style="color:#aaa;text-align:center;padding:20px;">לא נמצאו תוצאות</p>';
+    return;
+  }
+
+  const sec = document.createElement('div');
+  sec.className = 'ascii-section';
+  sec.innerHTML = `<div class="ascii-section-title">תוצאות חיפוש (${results.length})</div>`;
+  const grid = document.createElement('div');
+  grid.className = 'ascii-grid';
+  results.forEach(sym => {
+    const item = document.createElement('div');
+    item.className = 'ascii-item';
+    item.innerHTML = `<span class="ascii-char">${sym.char}</span><span class="ascii-name">${sym.name}</span>`;
+    item.addEventListener('click', () => copySymbol(sym.char, item));
+    grid.appendChild(item);
+  });
+  sec.appendChild(grid);
+  container.appendChild(sec);
+}
+
+// =====================================================
+// טקסט מעוצב – Unicode font transforms
+// =====================================================
+const STYLED_FONTS = [
+  {
+    label: '𝐁𝐨𝐥𝐝',
+    desc: 'Bold',
+    transform: t => mapChars(t,
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+      '𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗')
+  },
+  {
+    label: '𝘐𝘵𝘢𝘭𝘪𝘤',
+    desc: 'Italic',
+    transform: t => mapChars(t,
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+      '𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘹𝘺𝘻')
+  },
+  {
+    label: '𝑩𝒐𝒍𝒅 𝑰𝒕𝒂𝒍𝒊𝒄',
+    desc: 'Bold Italic',
+    transform: t => mapChars(t,
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+      '𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛')
+  },
+  {
+    label: '𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎',
+    desc: 'Monospace',
+    transform: t => mapChars(t,
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+      '𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿')
+  },
+  {
+    label: '𝕊𝕖𝕣𝕚𝕗 𝔻𝕠𝕦𝕓𝕝𝕖',
+    desc: 'Double Struck',
+    transform: t => mapChars(t,
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+      '𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡')
+  },
+  {
+    label: '𝔉𝔯𝔞𝔨𝔱𝔲𝔯',
+    desc: 'Fraktur',
+    transform: t => mapChars(t,
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+      '𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷')
+  },
+  {
+    label: '🅂🅀🅄🄰🅁🄴🅂',
+    desc: 'Squared',
+    transform: t => {
+      const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const squaredUpper = ['🅰','🅱','🅲','🅳','🅴','🅵','🅶','🅷','🅸','🅹','🅺','🅻','🅼','🅽','🅾','🅿','🆀','🆁','🆂','🆃','🆄','🆅','🆆','🆇','🆈','🆉'];
+      return t.split('').map(ch=>{
+        const idx=upper.indexOf(ch.toUpperCase());
+        return idx>=0?squaredUpper[idx]:ch;
+      }).join('');
+    }
+  },
+  {
+    label: 'Ⓒⓘⓡⓒⓛⓔⓓ',
+    desc: 'Circled',
+    transform: t => mapChars(t,
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+      'ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ⓪①②③④⑤⑥⑦⑧⑨')
+  },
+  {
+    label: 'ꜱᴍᴀʟʟ ᴄᴀᴘꜱ',
+    desc: 'Small Caps',
+    transform: t => mapChars(t,
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+      'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘQʀꜱᴛᴜᴠᴡxʏᴢᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘQʀꜱᴛᴜᴠᴡxʏᴢ')
+  },
+  {
+    label: 'U̲n̲d̲e̲r̲l̲i̲n̲e̲',
+    desc: 'Underline',
+    transform: t => t.split('').map(ch => ch === ' ' ? ' ' : ch + '\u0332').join('')
+  },
+];
+
+function mapChars(text, from, to) {
+  // to הוא string של Unicode characters (כל char יכול להיות מרובה bytes)
+  const toArr = [...to]; // פיצול נכון של surrogate pairs
+  return text.split('').map(ch => {
+    const idx = from.indexOf(ch);
+    return idx >= 0 && toArr[idx] ? toArr[idx] : ch;
+  }).join('');
+}
+
+function buildStyleGrid(text) {
+  const grid = document.getElementById('styleGrid');
+  grid.innerHTML = '';
+  STYLED_FONTS.forEach(font => {
+    const preview = text ? font.transform(text) : font.label;
+    const item = document.createElement('div');
+    item.className = 'style-item';
+    item.innerHTML = `
+      <div class="style-label">${font.desc}</div>
+      <div class="style-preview">${escHtml(preview)}</div>
+      <div class="style-copy-hint">לחץ להעתקה</div>
+    `;
+    item.addEventListener('click', () => {
+      if(!text) return;
+      navigator.clipboard.writeText(preview).then(() => {
+        item.querySelector('.style-copy-hint').textContent = '✅ הועתק!';
+        setTimeout(() => item.querySelector('.style-copy-hint').textContent = 'לחץ להעתקה', 2000);
+      });
+    });
+    grid.appendChild(item);
+  });
+}
+
+function updateStyledPreviews() {
+  const text = document.getElementById('styledInput').value;
+  buildStyleGrid(text);
+}
+
+// =====================================================
+// אתחול
+// =====================================================
+updateExample();
+buildSymbols();
+buildStyleGrid('');
+</script>
+</body>
+</html>
