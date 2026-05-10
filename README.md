@@ -1,79 +1,75 @@
-# 🔧 כלי טקסט עברי | Hebrew Text Tools
+# כלי טקסט עברי 🔧
 
-כלי עזר לטקסט עברי שרץ כולו בדפדפן, קובץ HTML אחד, בלי שרת ובלי התחברות.
-
-A browser-based Hebrew text utility. Single HTML file, no server, no login.
-
-🌐 **[פתח את הכלי | Open Tool](https://talkats.github.io/hebrew-text-tools)**
+תיקון טקסט עברי בעייתי — ג'יבריש, פריסת מקלדת שגויה, encoding שבור, קישורי מעקב, ועוד.
 
 ---
 
-## ✨ מה יש בו | Features
+## שתי דרכים להשתמש
 
-### 🔧 תיקון טקסט עברי | Hebrew Text Fixer
-- זיהוי אוטומטי של הבעיה
-- - תיקון ג'יבריש ובעיות Encoding
-  - - עברית ויזואלית לוגית (םולש → שלום)
-    - - תיקון הקלדה על מקלדת לא נכונה (ekln → שלום)
-      - - עברית DOS/Windows (CP862)
-        - - HTML Encode/Decode, URL Encode/Decode
-         
-          - Auto-detects the problem and fixes: garbled Hebrew, visual/logical order, keyboard layout mistakes, DOS/Windows codepage, HTML entities and URL encoding.
-         
-          - ### 🔗 ניקוי קישורים | URL Cleaner
-          - - הסרת פרמטרי UTM ומעקב אוטומטית
-            - - תמיכה ב-LinkedIn, Facebook, Google Ads ועוד
-              - - Presets מובנים + פרמטרים מותאמים אישית
-                - - סטטיסטיקות: כמה פרמטרים הוסרו, כמה תווים נחסכו
-                 
-                  - Removes UTM tags, LinkedIn tracking (rcm, trk), Facebook (fbclid), Google (gclid, _ga), and more. Custom parameter lists via advanced settings.
-                 
-                  - ### ✦ סימנים מיוחדים | Special Symbols
-                  - 7 קטגוריות עם חיפוש חי ולחיצה אחת להעתקה.
-                  - 7 categories with live search and one-click copy: bullets, arrows, circles, shapes, emphasis, lines, post emojis.
-                 
-                  - ### 𝐁 טקסט מעוצב | Styled Text
-                  - 10 סגנונות Unicode עם תצוגה חיה. עובד בלינקדאין, ווטסאפ, טלגרם.
-                  - 10 Unicode font styles with live preview. Works on LinkedIn, WhatsApp, Telegram, and anywhere plain text is used.
-                 
-                  - ---
+### 🌐 דפדפן — אפס התקנה
+פותחים את `hebrew-text-tools.html` (או [מהגיטהאב ישירות](https://talkats.github.io/hebrew-text-tools/hebrew-text-tools.html)), מדביקים טקסט, לוחצים תקן.
 
-                  ## 🚀 שימוש | Usage
+**4 לשוניות:**
+- **תיקון טקסט** — זיהוי אוטומטי של הבעיה ותיקונה (ג'יבריש, encoding שבור, מקלדת הפוכה, ועוד)
+- **ניקוי URL** — מסיר פרמטרי מעקב (UTM וכו')
+- **סימנים מיוחדים** — המרת אמוג'י, סמלים, תווים מיוחדים
+- **טקסט Unicode מעוצב** — הסרת עיצוב Bold/Italic/Monospace מ-Unicode
 
-                  **[https://talkats.github.io/hebrew-text-tools](https://talkats.github.io/hebrew-text-tools)**
+---
 
-                  Or clone and open locally:
+### ⚡ לוקלי — תיקון בלחיצה אחת מכל אפליקציה
 
-                  ```bash
-                  git clone https://github.com/talkats/hebrew-text-tools.git
-                  open hebrew-text-tools/index.html
-                  ```
+מסמנים טקסט בכל מקום במחשב → **Alt+F5** → הטקסט מתוקן במקום.
 
-                  ---
+לא צריך לעבור לדפדפן.
 
-                  ## 🛠 Tech
+#### דרישות
+- Windows
+- [Node.js](https://nodejs.org) (גרסה 16 ומעלה)
 
-                  - HTML + CSS + Vanilla JavaScript
-                  - - קובץ אחד, אפס תלויות, עובד גם אופליין
-                    - - Single file, zero dependencies, works offline
-                     
-                      - ---
+#### התקנה
 
-                      ## 📋 קיצורי מקלדת | Keyboard Shortcuts
+```bat
+git clone https://github.com/talkats/hebrew-text-tools.git
+cd hebrew-text-tools\local
+```
 
-                      | קיצור | פעולה |
-                      |-------|--------|
-                      | `Ctrl+Enter` | תקן טקסט / Fix text |
+הרץ פעם אחת כדי להגדיר auto-start ו-desktop shortcut:
 
-                      ---
+```powershell
+powershell -ExecutionPolicy Bypass -File setup-autostart.ps1
+```
 
-                      ## 🤝 תרומה | Contributing
+לאחר מכן לחץ פעמיים על **Hebrew Text Tools** בשולחן העבודה — ה-listener מתחיל.
 
-                      Pull requests מתקבלים בברכה. Issues עם דוגמאות לטקסט שלא מתוקן נכון יעזרו מאוד.
-                      Pull requests welcome. Issues with examples of incorrectly fixed text are especially helpful.
+#### Hotkeys
 
-                      ---
+| קיצור | פעולה |
+|-------|--------|
+| Alt+F5 | זיהוי אוטומטי ותיקון |
+| Alt+F6 | ניקוי URL (הסרת פרמטרי מעקב) |
+| Alt+F7 | עברית ויזואלית → לוגית |
+| Alt+F8 | המרת מקלדת אנגלית→עברית |
 
-                      ## 📄 License
+#### איך זה עובד
+1. מסמנים טקסט בכל אפליקציה
+2. לוחצים Alt+F5
+3. הטקסט המקורי מוחלף בגרסה המתוקנת
 
-                      MIT License. חופשי לשימוש, שינוי והפצה. Free to use, modify and distribute.
+---
+
+## מה הכלי מזהה ומתקן
+
+- **ג'יבריש מ-encoding שבור** — Latin-1 / UTF-8 mojibake
+- **פריסת מקלדת שגויה** — הקלדת עברית כשהמקלדת באנגלית ולהיפך
+- **עברית ויזואלית** — טקסט ישן שנשמר בסדר ויזואלי במקום לוגי
+- **DOS encoding** — קידוד עברי ישן (CP862)
+- **HTML entities** — `&amp;` → `&`
+- **URL encoding** — `%D7%A9%D7%9C%D7%95%D7%9D` → `שלום`
+- **קישורי מעקב** — הסרת פרמטרי UTM וכו'
+
+---
+
+## רישיון
+
+MIT
